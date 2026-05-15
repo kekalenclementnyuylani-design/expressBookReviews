@@ -13,7 +13,6 @@ const authenticatedUser = (username, password) => {
   return users.some(u => u.username === username && u.password === password);
 };
 
-// Task 7 — Register
 regd_users.post("/register", (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) {
@@ -26,7 +25,6 @@ regd_users.post("/register", (req, res) => {
   return res.status(201).json({ message: "User registered successfully" });
 });
 
-// Task 8 — Login
 regd_users.post("/login", (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) {
@@ -40,12 +38,10 @@ regd_users.post("/login", (req, res) => {
   return res.status(200).json({ message: "Login successful" });
 });
 
-// Task 9 — Add/update review
 regd_users.put("/auth/review/:isbn", (req, res) => {
   const isbn = req.params.isbn;
   const review = req.query.review;
   const username = req.user.data;
-
   if (!books[isbn]) {
     return res.status(404).json({ message: "Book not found" });
   }
@@ -53,19 +49,17 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
     books[isbn].reviews = {};
   }
   books[isbn].reviews[username] = review;
-  return res.status(200).json({ message: `Review added/updated for ISBN ${isbn}` });
+  return res.status(200).json({ message: "Review added/updated for ISBN " + isbn, reviews: books[isbn].reviews });
 });
 
-// Task 10 — Delete review
 regd_users.delete("/auth/review/:isbn", (req, res) => {
   const isbn = req.params.isbn;
   const username = req.user.data;
-
   if (!books[isbn] || !books[isbn].reviews || !books[isbn].reviews[username]) {
     return res.status(404).json({ message: "Review not found" });
   }
   delete books[isbn].reviews[username];
-  return res.status(200).json({ message: `Review for ISBN ${isbn} deleted` });
+  return res.status(200).json({ message: "Review for ISBN " + isbn + " deleted" });
 });
 
 module.exports.authenticated = regd_users;
